@@ -22,7 +22,7 @@ public class EligibilityFacade implements EligibilityService {
         EligibilityResponseTO response = new EligibilityResponseTO();
         ClientEligibilityEntity clientEligibilityEntity = repository.findByClientDocument(document);
         if (clientEligibilityEntity==null || clientEligibilityEntity.isAllow()){
-            log.info("Client com documento {} elegível", document);
+            log.info("Cliente com documento {} elegível", document);
             response.setEligible(true);
         }
         else{
