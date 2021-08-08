@@ -1,5 +1,7 @@
 package com.natal.eligibilityservice.facade;
 
+import com.natal.eligibilityservice.communication.SubscriptionClient;
+import com.natal.eligibilityservice.communication.SubscriptionClientResponse;
 import com.natal.eligibilityservice.controller.ClientEligibityTO;
 import com.natal.eligibilityservice.controller.EligibilityResponseTO;
 import com.natal.eligibilityservice.infrastructure.entity.ClientEligibilityEntity;
@@ -15,6 +17,9 @@ public class EligibilityFacade implements EligibilityService {
 
     @Autowired
     private ClientEligibilityRepository repository;
+
+    @Autowired
+    private SubscriptionClient subscriptionClient;
     
     @Override
     public EligibilityResponseTO getEligibility(String document) {
@@ -37,13 +42,18 @@ public class EligibilityFacade implements EligibilityService {
         try{
             ClientEligibilityEntity clientEligibilityEntityPersisted = repository.findByClientDocument(clientEligibityTO.getClientDocument());
             if (clientEligibilityEntityPersisted == null){
-                ClientEligibilityEntity clientEligibilityEntity
-                        = new ClientEligibilityEntity(
-                        clientEligibityTO.getClientDocument(),
-                        clientEligibityTO.isAllow(),
-                        clientEligibityTO.getReason()
-                );
-                repository.save(clientEligibilityEntity);
+                if (clientExists(clientEligibityTO.getClientDocument())){
+                    ClientEligibilityEntity clientEligibilityEntity
+                            = new ClientEligibilityEntity(
+                            clientEligibityTO.getClientDocument(),
+                            clientEligibityTO.isAllow(),
+                            clientEligibityTO.getReason()
+                    );
+                    repository.save(clientEligibilityEntity);
+                }
+                else {
+                    log.error("Cliente com documento {} não encontrado", clientEligibityTO.getClientDocument());
+                }
             }
             else {
                 clientEligibilityEntityPersisted.setAllow(clientEligibityTO.isAllow());
@@ -55,23 +65,9 @@ public class EligibilityFacade implements EligibilityService {
         }
     }
 
-//    private ClientEligibityTO findClientEligibilityEntity(String clientDocument) {
-//        ClientEligibityTO clientEligibityTO = new ClientEligibityTO();
-//        try{
-//            ClientEligibilityEntity clientEligibilityPersisted = repository.findByClientDocument(clientEligibityTO.getClientDocument());
-//            if (clientEligibilityPersisted !=null){
-//                clientEligibityTO.setClientDocument(clientEligibilityPersisted.getClientDocument());
-//                clientEligibityTO.setAllow(clientEligibilityPersisted.isAllow());
-//                clientEligibityTO.setReason(clientEligibilityPersisted.getReason());
-//            }
-//            else {
-//                log.warn("Registro de elegibilidade do cliente com documento {} não encontrado!", clientDocument);
-//                clientEligibityTO = null;
-//            }
-//        }catch (Exception e){
-//            log.error("Falha ao buscar elegibilidade do cliente com documento: {} ", clientDocument, e);
-//            clientEligibityTO = null;
-//        }
-//        return clientEligibityTO;
-//    }
+    private boolean clientExists(String clientDocument) {
+        SubscriptionClientResponse clientResponse = subscriptionClient.findClientByDocument(clientDocument);
+        return clientResponse != null;
+    }
+
 }
