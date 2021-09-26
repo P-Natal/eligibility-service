@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface EligibilityService {
     EligibilityResponseTO getEligibility(String document);
-    void create(ClientEligibityTO clientEligibityTO);
+    EligibilityResponseTO create(ClientEligibityTO clientEligibityTO);
 }

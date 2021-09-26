@@ -9,7 +9,6 @@ public class EligibilityResponseTO {
     @JsonProperty("isEligible")
     boolean isEligible;
 
-    public boolean isEligible() {
-        return isEligible;
-    }
+    @JsonProperty("reason")
+    String reason;
 }

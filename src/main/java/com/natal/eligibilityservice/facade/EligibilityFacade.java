@@ -38,7 +38,8 @@ public class EligibilityFacade implements EligibilityService {
     }
 
     @Override
-    public void create(ClientEligibityTO clientEligibityTO) {
+    public EligibilityResponseTO create(ClientEligibityTO clientEligibityTO) {
+        EligibilityResponseTO eligibilityResponse = new EligibilityResponseTO();
         try{
             ClientEligibilityEntity clientEligibilityEntityPersisted = repository.findByClientDocument(clientEligibityTO.getClientDocument());
             if (clientEligibilityEntityPersisted == null){
@@ -49,7 +50,9 @@ public class EligibilityFacade implements EligibilityService {
                             clientEligibityTO.isAllow(),
                             clientEligibityTO.getReason()
                     );
-                    repository.save(clientEligibilityEntity);
+                    ClientEligibilityEntity eligibilityEntity = repository.save(clientEligibilityEntity);
+                    eligibilityResponse.setEligible(eligibilityEntity.isAllow());
+                    eligibilityResponse.setReason(eligibilityEntity.getReason());
                 }
                 else {
                     log.error("Cliente com documento {} não encontrado", clientEligibityTO.getClientDocument());
@@ -58,11 +61,14 @@ public class EligibilityFacade implements EligibilityService {
             else {
                 clientEligibilityEntityPersisted.setAllow(clientEligibityTO.isAllow());
                 repository.save(clientEligibilityEntityPersisted);
+                eligibilityResponse.setEligible(clientEligibilityEntityPersisted.isAllow());
+                eligibilityResponse.setReason(clientEligibilityEntityPersisted.getReason());
             }
         }
         catch (Exception e){
             log.error("Erro ao salvar elegibilidade de cliente com documento {}", clientEligibityTO.getClientDocument(), e);
         }
+        return eligibilityResponse;
     }
 
     private boolean clientExists(String clientDocument) {

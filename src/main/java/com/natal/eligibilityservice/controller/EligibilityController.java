@@ -20,8 +20,9 @@ public class EligibilityController {
     }
 
     @PostMapping
-    public void getEligibility(@RequestBody ClientEligibityTO clientEligibityTO){
-        eligibilityService.create(clientEligibityTO);
+    public EligibilityResponseTO setEligibility(@RequestBody ClientEligibityTO clientEligibityTO){
+        log.info("Recebendo requisição para criação de elegibilidade com body {}", clientEligibityTO);
+        return eligibilityService.create(clientEligibityTO);
     }
 
 }
