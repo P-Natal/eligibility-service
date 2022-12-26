@@ -1,6 +1,6 @@
 version: '3'
 services:
-  postgres:
+  postgres-eligibility:
     image: postgres:13.3-alpine
     hostname: postgres
     ports:
@@ -10,6 +10,8 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USERNAME=postgres
     container_name: postgres_eligibility_service
+    networks:
+      - sales-order-service_localnet
 
   eligibility-service:
     image: natal/eligibility-service:1.0
@@ -17,4 +19,10 @@ services:
       - "8081:8081"
     container_name: eligibility_service
     depends_on:
-      - postgres
+      - postgres-eligibility
+    networks:
+      - sales-order-service_localnet
+
+networks:
+  sales-order-service_localnet:
+    external: true
