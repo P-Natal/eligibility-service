@@ -11,7 +11,7 @@ start-db:
 
 build-image:
 	mvn clean package
-	docker build -t natal/eligibility-service:1.0 .
+	docker build -t pedronatal/eligibility-service:1.0 .
 
 build-run: build-image
 	docker-compose up

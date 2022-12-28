@@ -31,8 +31,9 @@ public class EligibilityFacade implements EligibilityService {
             response.setEligible(true);
         }
         else{
-            log.info("Client com documento {} não está elegível", document);
+            log.info("Client com documento {} nao esta elegível", document);
             response.setEligible(false);
+            response.setReason(clientEligibilityEntity.getReason());
         }
         return response;
     }
@@ -43,7 +44,7 @@ public class EligibilityFacade implements EligibilityService {
         try{
             ClientEligibilityEntity clientEligibilityEntityPersisted = repository.findByClientDocument(clientEligibityTO.getClientDocument());
             if (clientEligibilityEntityPersisted == null){
-                if (clientExists(clientEligibityTO.getClientDocument())){
+//                if (clientExists(clientEligibityTO.getClientDocument())){
                     ClientEligibilityEntity clientEligibilityEntity
                             = new ClientEligibilityEntity(
                             clientEligibityTO.getClientDocument(),
@@ -53,10 +54,10 @@ public class EligibilityFacade implements EligibilityService {
                     ClientEligibilityEntity eligibilityEntity = repository.save(clientEligibilityEntity);
                     eligibilityResponse.setEligible(eligibilityEntity.isAllow());
                     eligibilityResponse.setReason(eligibilityEntity.getReason());
-                }
-                else {
-                    log.error("Cliente com documento {} não encontrado", clientEligibityTO.getClientDocument());
-                }
+//                }
+//                else {
+//                    log.error("Cliente com documento {} nao encontrado", clientEligibityTO.getClientDocument());
+//                }
             }
             else {
                 clientEligibilityEntityPersisted.setAllow(clientEligibityTO.isAllow());

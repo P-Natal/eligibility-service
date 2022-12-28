@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/eligibility")
@@ -15,13 +17,13 @@ public class EligibilityController {
 
     @GetMapping("/{document}")
     public EligibilityResponseTO getEligibility(@PathVariable("document") String document){
-        log.info("Recebendo requisição para elegibilidade do cliente com documento {}", document);
+        log.info("Recebendo requisicao para elegibilidade do cliente com documento {}", document);
         return eligibilityService.getEligibility(document);
     }
 
     @PostMapping
-    public EligibilityResponseTO setEligibility(@RequestBody ClientEligibityTO clientEligibityTO){
-        log.info("Recebendo requisição para criação de elegibilidade com body {}", clientEligibityTO);
+    public EligibilityResponseTO setEligibility(@Valid @RequestBody ClientEligibityTO clientEligibityTO){
+        log.info("Recebendo requisicao para criacao de elegibilidade com body {}", clientEligibityTO);
         return eligibilityService.create(clientEligibityTO);
     }
 
